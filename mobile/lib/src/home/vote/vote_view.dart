@@ -3,18 +3,25 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:mobile/src/home/vote/vote_controller.dart';
 
-class VoteView extends StatelessWidget {
-  const VoteView({super.key});
+class Shit {
+  Shit(this.name, this.path);
+  final String name;
+  final String path;
+}
 
-  static const frameworks = [
-    'assets/images/shit/react.svg',
-    'assets/images/shit/react.svg',
-    'assets/images/shit/react.svg',
+class VoteView extends ConsumerWidget {
+  VoteView({super.key});
+
+  final shits = [
+    Shit("react", 'assets/images/shit/react.svg'),
+    Shit("vue", 'assets/images/shit/vue.svg'),
   ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     const largeBall = Size(273, 273);
     const smallBall = Size(95, 95);
     final size = MediaQuery.of(context).size;
@@ -77,15 +84,16 @@ class VoteView extends StatelessWidget {
             SizedBox(
               height: 300,
               child: PageView.builder(
-                itemCount: frameworks.length,
+                controller: ref.watch(voteController).pageController,
+                itemCount: shits.length,
                 itemBuilder: ((context, index) {
-                  final framework = frameworks[index];
+                  final shit = shits[index];
                   return Container(
                     margin: const EdgeInsets.symmetric(horizontal: 32),
                     height: size.width * .9,
                     child: GlassMorphism(
                       child: Center(
-                        child: SvgPicture.asset(framework),
+                        child: SvgPicture.asset(shit.path),
                       ),
                     ),
                   );
@@ -101,7 +109,20 @@ class VoteView extends StatelessWidget {
                   RoundButton(onPressed: () {}, text: '-1', color: Colors.red),
                   RoundButton(onPressed: () {}, text: '0', color: Colors.grey),
                   RoundButton(
-                      onPressed: () {}, text: '+1', color: Colors.green),
+                    onPressed: () {
+                      final controllerNotifier =
+                          ref.read(voteController.notifier);
+                      final controller = ref.read(voteController);
+
+                      controllerNotifier.vote(
+                        1,
+                        shits[controller.pageController.page!.round()].name,
+                      );
+                      controllerNotifier.nextPage();
+                    },
+                    text: '+1',
+                    color: Colors.green,
+                  ),
                 ],
               ),
             ),

@@ -15,7 +15,7 @@ class HomeView extends HookConsumerWidget {
       length: 3,
       child: Scaffold(
         body: [
-          const VoteView(),
+          VoteView(),
           Container(),
           Container(),
         ][controllerIndex],
