@@ -54,12 +54,12 @@ class _BottomNavigationBar extends StatelessWidget {
           icon: Icon(Icons.home),
         ),
         BottomNavigationBarItem(
-          label: "Search",
-          icon: Icon(Icons.search),
+          label: "Leaderboard",
+          icon: Icon(Icons.list),
         ),
         BottomNavigationBarItem(
-          label: "Categories",
-          icon: Icon(Icons.grid_view),
+          label: "WHAT?",
+          icon: Icon(Icons.question_mark),
         ),
       ],
     );

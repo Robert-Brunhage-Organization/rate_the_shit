@@ -2,9 +2,16 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class VoteView extends StatelessWidget {
   const VoteView({super.key});
+
+  static const frameworks = [
+    'assets/images/shit/react.svg',
+    'assets/images/shit/react.svg',
+    'assets/images/shit/react.svg',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -54,27 +61,41 @@ class VoteView extends StatelessWidget {
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
+        // padding: const EdgeInsets.symmetric(horizontal: 32),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: Text(
                 AppLocalizations.of(context)!.voteViewTitle,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.headlineLarge,
               ),
-              const SizedBox(height: 58),
-              SizedBox(
-                height: size.width * .9,
-                child: GlassMorphism(
-                  child: Center(
-                    child: Container(),
-                  ),
-                ),
+            ),
+            const SizedBox(height: 58),
+            SizedBox(
+              height: 300,
+              child: PageView.builder(
+                itemCount: frameworks.length,
+                itemBuilder: ((context, index) {
+                  final framework = frameworks[index];
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 32),
+                    height: size.width * .9,
+                    child: GlassMorphism(
+                      child: Center(
+                        child: SvgPicture.asset(framework),
+                      ),
+                    ),
+                  );
+                }),
               ),
-              const SizedBox(height: 58),
-              Row(
+            ),
+            const SizedBox(height: 58),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   RoundButton(onPressed: () {}, text: '-1', color: Colors.red),
@@ -83,8 +104,8 @@ class VoteView extends StatelessWidget {
                       onPressed: () {}, text: '+1', color: Colors.green),
                 ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ],
     );
