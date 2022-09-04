@@ -17,6 +17,7 @@ const Home: NextPage = () => {
           <a
             href="https://github.com/Robert-Brunhage-Organization/rate_the_shit"
             target="_blank"
+            ref="noreferrer"
           >
             Shit!
           </a>
