@@ -13,14 +13,7 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to the{" "}
-          <a
-            href="https://github.com/Robert-Brunhage-Organization/rate_the_shit"
-            target="_blank"
-            ref="noreferrer"
-          >
-            Shit!
-          </a>
+          Welcome to the Shit!
         </h1>
       </main>
     </div>
