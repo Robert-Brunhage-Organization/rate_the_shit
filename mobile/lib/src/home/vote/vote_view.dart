@@ -13,118 +13,91 @@ class Shit {
 }
 
 class VoteView extends ConsumerWidget {
-  VoteView({super.key});
+  const VoteView({super.key});
 
-  final shits = [
+  static final shits = [
     Shit("react", 'assets/images/shit/react.svg'),
     Shit("vue", 'assets/images/shit/vue.svg'),
   ];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    const largeBall = Size(273, 273);
-    const smallBall = Size(95, 95);
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 200),
+      switchInCurve: Curves.easeInOut,
+      child: ref.watch(voteController).noMoreShits
+          ? Text(
+              'See leaderboard',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headlineLarge,
+            )
+          : const VoteBody(),
+    );
+  }
+}
+
+class VoteBody extends ConsumerWidget {
+  const VoteBody({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
 
-    return Stack(
-      fit: StackFit.expand,
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Positioned(
-          top: -(largeBall.height / 3),
-          left: -(largeBall.width / 2),
-          child: GradientCircle(
-            size: largeBall,
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              const Color(0xffFF3838).withOpacity(.78),
-              const Color(0xffED6B9A),
-            ],
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Text(
+            AppLocalizations.of(context)!.voteViewTitle,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.headlineLarge,
           ),
         ),
-        Positioned(
-          top: size.height * 0.2,
-          right: -(largeBall.width / 2),
-          child: GradientCircle(
-            size: largeBall,
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              const Color(0xffED6BE0),
-              const Color(0xffD14FFF).withOpacity(.52),
-            ],
+        const SizedBox(height: 58),
+        SizedBox(
+          height: 300,
+          child: PageView.builder(
+            controller: ref.watch(voteController).pageController,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: VoteView.shits.length,
+            itemBuilder: (context, index) {
+              final shit = VoteView.shits[index];
+              return Container(
+                margin: const EdgeInsets.symmetric(horizontal: 32),
+                height: size.width * .9,
+                child: GlassMorphism(
+                  child: Center(
+                    child: SvgPicture.asset(shit.path),
+                  ),
+                ),
+              );
+            },
           ),
         ),
-        Positioned(
-          top: size.height * 0.6,
-          right: smallBall.width / 2,
-          child: GradientCircle(
-            size: smallBall,
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              const Color(0xffED6BE0),
-              const Color(0xffD14FFF).withOpacity(.52),
+        const SizedBox(height: 58),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              RoundButton(
+                onPressed: () => onVoteTap(ref, -1),
+                text: '-1',
+                color: Colors.red,
+              ),
+              RoundButton(
+                onPressed: () => onVoteTap(ref, 0),
+                text: '0',
+                color: Colors.grey,
+              ),
+              RoundButton(
+                onPressed: () => onVoteTap(ref, 1),
+                text: '+1',
+                color: Colors.green,
+              ),
             ],
           ),
-        ),
-        // padding: const EdgeInsets.symmetric(horizontal: 32),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
-              child: Text(
-                AppLocalizations.of(context)!.voteViewTitle,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headlineLarge,
-              ),
-            ),
-            const SizedBox(height: 58),
-            SizedBox(
-              height: 300,
-              child: PageView.builder(
-                controller: ref.watch(voteController).pageController,
-                itemCount: shits.length,
-                itemBuilder: ((context, index) {
-                  final shit = shits[index];
-                  return Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 32),
-                    height: size.width * .9,
-                    child: GlassMorphism(
-                      child: Center(
-                        child: SvgPicture.asset(shit.path),
-                      ),
-                    ),
-                  );
-                }),
-              ),
-            ),
-            const SizedBox(height: 58),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  RoundButton(
-                    onPressed: () => onVoteTap(ref, -1),
-                    text: '-1',
-                    color: Colors.red,
-                  ),
-                  RoundButton(
-                    onPressed: () => onVoteTap(ref, 0),
-                    text: '0',
-                    color: Colors.grey,
-                  ),
-                  RoundButton(
-                    onPressed: () => onVoteTap(ref, 1),
-                    text: '+1',
-                    color: Colors.green,
-                  ),
-                ],
-              ),
-            ),
-          ],
         ),
       ],
     );
@@ -133,13 +106,12 @@ class VoteView extends ConsumerWidget {
   void onVoteTap(WidgetRef ref, int value) {
     final controllerNotifier = ref.read(voteController.notifier);
     final controller = ref.read(voteController);
-    final shitIndex = controller.pageController.page!.round();
+    final shitIndex = controller.currentPage;
 
     controllerNotifier.vote(
       value,
-      shits[shitIndex].name,
+      VoteView.shits[shitIndex].name,
     );
-    controllerNotifier.nextPage();
   }
 }
 

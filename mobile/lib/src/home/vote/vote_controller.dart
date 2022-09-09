@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:mobile/src/home/vote/vote_view.dart';
 
 final voteController = ChangeNotifierProvider(((ref) {
   return VoteController(
@@ -29,6 +30,10 @@ class VoteController extends ChangeNotifier {
 
   late final _pageController = PageController();
   PageController get pageController => _pageController;
+  int get currentPage => pageController.page?.round() ?? 1;
+
+  int _shitsVotedOn = 0;
+  bool get noMoreShits => _shitsVotedOn >= VoteView.shits.length;
 
   void nextPage() {
     _pageController.nextPage(
@@ -39,6 +44,7 @@ class VoteController extends ChangeNotifier {
 
   Future<void> vote(int value, String name) async {
     try {
+      _shitsVotedOn++;
       final response = await _dio.post(
         "/shit",
         data: <String, dynamic>{
@@ -49,6 +55,11 @@ class VoteController extends ChangeNotifier {
       debugPrint(response.statusMessage);
     } on DioError catch (e) {
       debugPrint('Something went wrong $e');
+    } finally {
+      if (!noMoreShits) {
+        nextPage();
+      }
+      notifyListeners();
     }
   }
 }

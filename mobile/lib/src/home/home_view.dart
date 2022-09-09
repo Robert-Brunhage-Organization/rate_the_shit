@@ -10,15 +10,72 @@ class HomeView extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var controllerIndex = ref.watch(homeControllerProvider).index;
+    const largeBall = Size(273, 273);
+    const smallBall = Size(95, 95);
+    final size = MediaQuery.of(context).size;
 
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        body: [
-          VoteView(),
-          Container(),
-          Container(),
-        ][controllerIndex],
+        body: Stack(
+          fit: StackFit.expand,
+          children: [
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
+              top: -(largeBall.height / (3 + controllerIndex)),
+              left: -(largeBall.width / (2 + controllerIndex)),
+              child: GradientCircle(
+                size: largeBall,
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  const Color(0xffFF3838).withOpacity(.78),
+                  const Color(0xffED6B9A),
+                ],
+              ),
+            ),
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
+              top: size.height * 0.2,
+              right: -(largeBall.width / (2 + controllerIndex)),
+              child: GradientCircle(
+                size: largeBall,
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  const Color(0xffED6BE0),
+                  const Color(0xffD14FFF).withOpacity(.52),
+                ],
+              ),
+            ),
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
+              top: size.height * 0.6,
+              right: smallBall.width / (2 + controllerIndex),
+              child: GradientCircle(
+                size: smallBall,
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  const Color(0xffED6BE0),
+                  const Color(0xffD14FFF).withOpacity(.52),
+                ],
+              ),
+            ),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 50),
+              switchInCurve: Curves.easeInOut,
+              child: [
+                const VoteView(),
+                Container(),
+                Container(),
+              ][controllerIndex],
+            ),
+          ],
+        ),
         bottomNavigationBar: _BottomNavigationBar(
           controllerIndex: controllerIndex,
           onTap: (index) =>
