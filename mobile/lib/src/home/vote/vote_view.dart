@@ -106,20 +106,18 @@ class VoteView extends ConsumerWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  RoundButton(onPressed: () {}, text: '-1', color: Colors.red),
-                  RoundButton(onPressed: () {}, text: '0', color: Colors.grey),
                   RoundButton(
-                    onPressed: () {
-                      final controllerNotifier =
-                          ref.read(voteController.notifier);
-                      final controller = ref.read(voteController);
-
-                      controllerNotifier.vote(
-                        1,
-                        shits[controller.pageController.page!.round()].name,
-                      );
-                      controllerNotifier.nextPage();
-                    },
+                    onPressed: () => onVoteTap(ref, -1),
+                    text: '-1',
+                    color: Colors.red,
+                  ),
+                  RoundButton(
+                    onPressed: () => onVoteTap(ref, 0),
+                    text: '0',
+                    color: Colors.grey,
+                  ),
+                  RoundButton(
+                    onPressed: () => onVoteTap(ref, 1),
                     text: '+1',
                     color: Colors.green,
                   ),
@@ -130,6 +128,18 @@ class VoteView extends ConsumerWidget {
         ),
       ],
     );
+  }
+
+  void onVoteTap(WidgetRef ref, int value) {
+    final controllerNotifier = ref.read(voteController.notifier);
+    final controller = ref.read(voteController);
+    final shitIndex = controller.pageController.page!.round();
+
+    controllerNotifier.vote(
+      value,
+      shits[shitIndex].name,
+    );
+    controllerNotifier.nextPage();
   }
 }
 

@@ -6,7 +6,6 @@ const prisma = new PrismaClient();
 
 type Error = {
   error: string;
-  success: boolean;
 };
 
 type Payload = {
@@ -21,29 +20,83 @@ export default async function handler(
   if (req.method === "POST") {
     return await vote(req, res);
   } else {
-    return res.status(405).json({ error: "eat shit", success: false });
+    return res.status(405).json({ error: "eat shit" });
   }
 }
 
 async function vote(req: NextApiRequest, res: NextApiResponse<Shit | Error>) {
   const body: Payload = req.body;
-  try {
+
+  async function increment(): Promise<Shit> {
     const upsertShit = await prisma.shit.upsert({
       where: {
         name: body.name,
       },
       update: {
-        rating: body.value,
+        rating: {
+          increment: 1 
+        },
         name: body.name,
       },
       create: {
-        rating: body.value!,
-        name: body.name!,
+        rating: body.value,
+        name: body.name,
       },
     });
+
+    return upsertShit;
+  }
+
+  async function decrement(): Promise<Shit> {
+    const upsertShit = await prisma.shit.upsert({
+      where: {
+        name: body.name,
+      },
+      update: {
+        rating: {
+          decrement: 1
+        },
+        name: body.name,
+      },
+      create: {
+        rating: body.value,
+        name: body.name,
+      },
+    });
+
+    return upsertShit;
+  }
+
+  async function none(): Promise<Shit> {
+    const upsertShit = await prisma.shit.upsert({
+      where: {
+        name: body.name,
+      },
+      update: {
+        name: body.name,
+      },
+      create: {
+        rating: body.value,
+        name: body.name,
+      },
+    });
+
+    return upsertShit;
+  }
+
+  try {
+    let upsertShit: Shit;
+    console.log(body);
+    if (body.value > 0) {
+      upsertShit = await increment();
+    } else if (body.value < 0) {
+      upsertShit = await decrement();
+    } else {
+      upsertShit = await none();
+    }
     return res.status(200).json(upsertShit);
   } catch (error) {
     console.error("Request error", error);
-    res.status(500).json({ error: "Error creating shit", success: false });
+    res.status(500).json({ error: "Error creating shit" });
   }
 }
