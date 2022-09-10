@@ -11,6 +11,8 @@ datasource db {
 
 model Shit {
   id     Int    @id @default(autoincrement())
-  rating Int
+  positiveRating Int
+  negativeRating Int
+  skipRating Int
   name   String @unique
 }

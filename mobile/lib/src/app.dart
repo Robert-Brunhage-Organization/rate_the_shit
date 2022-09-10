@@ -51,11 +51,11 @@ ThemeData getDarkTheme(BuildContext context) {
   return ThemeData.dark(
     useMaterial3: true,
   ).copyWith(
-    textTheme: Theme.of(context).textTheme.copyWith(
-          headlineLarge: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-        ),
+    textTheme: Theme.of(context)
+        .textTheme
+        .apply(
+          displayColor: Colors.white,
+          bodyColor: Colors.white,
+        )
   );
 }

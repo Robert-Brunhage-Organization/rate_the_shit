@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mobile/src/home/vote/vote_service.dart';
 import 'package:mobile/src/home/vote/vote_view.dart';
@@ -16,18 +15,15 @@ class VoteController extends ShitChangeNotifier {
   VoteController(this._voteService);
   final VoteService _voteService;
 
-  late final _pageController = PageController();
-  PageController get pageController => _pageController;
-  int get currentPage => pageController.page?.round() ?? 0;
+  int _currentShit = 0;
+  int get currentShit => _currentShit;
 
   int _shitsVotedOn = 0;
   bool get noMoreShits => _shitsVotedOn >= VoteView.shits.length;
 
   void nextPage() {
-    _pageController.nextPage(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
+    _currentShit++;
+    notifyListeners();
   }
 
   Future<Result<Exception, bool>> vote(int value, String name) async {

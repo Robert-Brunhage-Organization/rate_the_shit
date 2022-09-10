@@ -6,18 +6,22 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mobile/src/home/vote/vote_controller.dart';
 
-class Shit {
-  Shit(this.name, this.path);
-  final String name;
-  final String path;
-}
+import '../shit.dart';
 
 class VoteView extends ConsumerWidget {
   const VoteView({super.key});
 
   static final shits = [
-    Shit("react", 'assets/images/shit/react.svg'),
-    Shit("vue", 'assets/images/shit/vue.svg'),
+    Shit(name: "react", path: 'assets/images/shit/react.svg'),
+    Shit(name: "vue", path: 'assets/images/shit/vue.svg'),
+    Shit(name: "angular", path: 'assets/images/shit/angular.svg'),
+    Shit(name: "lit", path: 'assets/images/shit/lit.svg'),
+    Shit(name: "nextjs", path: 'assets/images/shit/nextjs.svg'),
+    Shit(name: "nuxt", path: 'assets/images/shit/nuxt.svg'),
+    Shit(name: "react native", path: 'assets/images/shit/react_native.svg'),
+    Shit(name: "svelte", path: 'assets/images/shit/svelte.svg'),
+    Shit(name: "xamarin", path: 'assets/images/shit/xamarin.svg'),
+    Shit(name: "flutter", path: 'assets/images/shit/flutter.svg'),
   ];
 
   @override
@@ -42,6 +46,7 @@ class VoteBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
+    final currentShit = ref.watch(voteController).currentShit;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -55,25 +60,27 @@ class VoteBody extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 58),
-        SizedBox(
-          height: 300,
-          child: PageView.builder(
-            controller: ref.watch(voteController).pageController,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: VoteView.shits.length,
-            itemBuilder: (context, index) {
-              final shit = VoteView.shits[index];
-              return Container(
-                margin: const EdgeInsets.symmetric(horizontal: 32),
-                height: size.width * .9,
-                child: GlassMorphism(
-                  child: Center(
-                    child: SvgPicture.asset(shit.path),
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 1000),
+          switchInCurve: Curves.easeInOut,
+          switchOutCurve: Curves.easeInOut,
+          child: VoteView.shits.map((e) {
+            return SizedBox(
+                key: ValueKey(e.path),
+                height: 300,
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 32),
+                  height: size.width * .9,
+                  child: GlassMorphism(
+                    child: Center(
+                      child: SvgPicture.asset(
+                        e.path,
+                        width: double.infinity,
+                      ),
+                    ),
                   ),
-                ),
-              );
-            },
-          ),
+                ));
+          }).toList()[currentShit],
         ),
         const SizedBox(height: 58),
         Padding(
@@ -106,14 +113,13 @@ class VoteBody extends ConsumerWidget {
   void onVoteTap(WidgetRef ref, int value) {
     final controllerNotifier = ref.read(voteController.notifier);
     final controller = ref.read(voteController);
-    final shitIndex = controller.currentPage;
+    final shitIndex = controller.currentShit;
 
-    if(!ref.read(voteController).isBusy){
-
-    controllerNotifier.vote(
-      value,
-      VoteView.shits[shitIndex].name,
-    );
+    if (!ref.read(voteController).isBusy) {
+      controllerNotifier.vote(
+        value,
+        VoteView.shits[shitIndex].name,
+      );
     }
   }
 }
@@ -163,6 +169,7 @@ class GlassMorphism extends StatelessWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
+          padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
