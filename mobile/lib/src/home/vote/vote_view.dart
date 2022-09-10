@@ -108,10 +108,13 @@ class VoteBody extends ConsumerWidget {
     final controller = ref.read(voteController);
     final shitIndex = controller.currentPage;
 
+    if(!ref.read(voteController).isBusy){
+
     controllerNotifier.vote(
       value,
       VoteView.shits[shitIndex].name,
     );
+    }
   }
 }
 
