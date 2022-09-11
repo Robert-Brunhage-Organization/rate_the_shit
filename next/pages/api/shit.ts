@@ -15,8 +15,14 @@ type Payload = {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Shit | Shit[] | Error>
+  res: NextApiResponse<Shit | Shit[] | string | Error>
 ) {
+
+  // This will allow OPTIONS request
+  if (req.method === "OPTIONS") {
+    return res.status(200).send('ok!');
+  }
+
   if (req.method === "POST") {
     return await vote(req, res);
   } else if (req.method === "GET") {
