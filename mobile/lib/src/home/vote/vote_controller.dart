@@ -1,54 +1,47 @@
-import 'dart:io';
-
-import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:mobile/src/home/vote/vote_service.dart';
+import 'package:mobile/src/home/vote/vote_view.dart';
+import 'package:multiple_result/multiple_result.dart';
 
-final voteController = ChangeNotifierProvider(((ref) {
+import '../../core/shit_change_notifier.dart';
+
+final voteController = ChangeNotifierProvider((ref) {
   return VoteController(
-    ref.watch(dioProvider),
-  );
-}));
-
-final dioProvider = Provider((ref) {
-  return Dio(
-    BaseOptions(
-      baseUrl: kReleaseMode
-          ? 'https://rate-the-shit.vercel.app/api'
-          : Platform.isAndroid
-              ? 'http://10.0.2.2:3000/api'
-              : 'http://localhost:3000/api',
-    ),
+    ref.watch(voteServiceProvider),
   );
 });
 
-class VoteController extends ChangeNotifier {
-  VoteController(this._dio);
-  final Dio _dio;
+class VoteController extends ShitChangeNotifier {
+  VoteController(this._voteService);
+  final VoteService _voteService;
 
-  late final _pageController = PageController();
-  PageController get pageController => _pageController;
+  int _currentShit = 0;
+  int get currentShit => _currentShit;
+
+  int _shitsVotedOn = 0;
+  bool get noMoreShits => _shitsVotedOn >= VoteView.shits.length;
 
   void nextPage() {
-    _pageController.nextPage(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
+    _currentShit++;
+    notifyListeners();
   }
 
-  Future<void> vote(int value, String name) async {
-    try {
-      final response = await _dio.post(
-        "/shit",
-        data: <String, dynamic>{
-          'value': value,
-          'name': name,
-        },
-      );
-      debugPrint(response.statusMessage);
-    } on DioError catch (e) {
-      debugPrint('Something went wrong $e');
-    }
+  Future<Result<Exception, bool>> vote(int value, String name) async {
+    setBusy();
+    final result = await _voteService.vote(name, value);
+    setBusy(false);
+
+    result.when(
+      (error) => null,
+      (success) {
+        _shitsVotedOn++;
+        notifyListeners();
+        if (!noMoreShits) {
+          nextPage();
+        }
+      },
+    );
+
+    return result;
   }
 }

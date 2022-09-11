@@ -15,10 +15,12 @@ type Payload = {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Shit | Error>
+  res: NextApiResponse<Shit | Shit[] | Error>
 ) {
   if (req.method === "POST") {
     return await vote(req, res);
+  } else if (req.method === "GET") {
+    return await get(res);
   } else {
     return res.status(405).json({ error: "eat shit" });
   }
@@ -33,13 +35,14 @@ async function vote(req: NextApiRequest, res: NextApiResponse<Shit | Error>) {
         name: body.name,
       },
       update: {
-        rating: {
-          increment: 1 
+        positiveRating: {
+          increment: 1
         },
-        name: body.name,
       },
       create: {
-        rating: body.value,
+        positiveRating: 1,
+        negativeRating: 0,
+        skipRating: 0,
         name: body.name,
       },
     });
@@ -53,13 +56,14 @@ async function vote(req: NextApiRequest, res: NextApiResponse<Shit | Error>) {
         name: body.name,
       },
       update: {
-        rating: {
-          decrement: 1
+        negativeRating: {
+          increment: 1
         },
-        name: body.name,
       },
       create: {
-        rating: body.value,
+        positiveRating: 0,
+        negativeRating: 1,
+        skipRating: 0,
         name: body.name,
       },
     });
@@ -73,10 +77,14 @@ async function vote(req: NextApiRequest, res: NextApiResponse<Shit | Error>) {
         name: body.name,
       },
       update: {
-        name: body.name,
+        skipRating: {
+          increment: 1
+        },
       },
       create: {
-        rating: body.value,
+        positiveRating: 0,
+        negativeRating: 0,
+        skipRating: 1,
         name: body.name,
       },
     });
@@ -98,5 +106,25 @@ async function vote(req: NextApiRequest, res: NextApiResponse<Shit | Error>) {
   } catch (error) {
     console.error("Request error", error);
     res.status(500).json({ error: "Error creating shit" });
+  }
+}
+
+
+async function get(res: NextApiResponse<Shit[] | Error>) {
+  try {
+    let shits = await prisma.shit.findMany({
+      orderBy: [
+        {
+          positiveRating: 'desc'
+        },
+        {
+          negativeRating: 'asc'
+        },
+      ]
+    });
+    return res.status(200).json(shits);
+  } catch (error) {
+    console.error("Request error", error);
+    res.status(500).json({ error: "Error getting all the shit" });
   }
 }

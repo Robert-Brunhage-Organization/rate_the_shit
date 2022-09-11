@@ -6,125 +6,105 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mobile/src/home/vote/vote_controller.dart';
 
-class Shit {
-  Shit(this.name, this.path);
-  final String name;
-  final String path;
-}
+import '../shit.dart';
 
 class VoteView extends ConsumerWidget {
-  VoteView({super.key});
+  const VoteView({super.key});
 
-  final shits = [
-    Shit("react", 'assets/images/shit/react.svg'),
-    Shit("vue", 'assets/images/shit/vue.svg'),
+  static final shits = [
+    Shit(name: "react", path: 'assets/images/shit/react.svg'),
+    Shit(name: "vue", path: 'assets/images/shit/vue.svg'),
+    Shit(name: "angular", path: 'assets/images/shit/angular.svg'),
+    Shit(name: "lit", path: 'assets/images/shit/lit.svg'),
+    Shit(name: "nextjs", path: 'assets/images/shit/nextjs.svg'),
+    Shit(name: "nuxt", path: 'assets/images/shit/nuxt.svg'),
+    Shit(name: "react native", path: 'assets/images/shit/react_native.svg'),
+    Shit(name: "svelte", path: 'assets/images/shit/svelte.svg'),
+    Shit(name: "xamarin", path: 'assets/images/shit/xamarin.svg'),
+    Shit(name: "flutter", path: 'assets/images/shit/flutter.svg'),
   ];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    const largeBall = Size(273, 273);
-    const smallBall = Size(95, 95);
-    final size = MediaQuery.of(context).size;
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 200),
+      switchInCurve: Curves.easeInOut,
+      child: ref.watch(voteController).noMoreShits
+          ? Text(
+              'See leaderboard',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headlineLarge,
+            )
+          : const VoteBody(),
+    );
+  }
+}
 
-    return Stack(
-      fit: StackFit.expand,
+class VoteBody extends ConsumerWidget {
+  const VoteBody({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final size = MediaQuery.of(context).size;
+    final currentShit = ref.watch(voteController).currentShit;
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Positioned(
-          top: -(largeBall.height / 3),
-          left: -(largeBall.width / 2),
-          child: GradientCircle(
-            size: largeBall,
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              const Color(0xffFF3838).withOpacity(.78),
-              const Color(0xffED6B9A),
-            ],
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Text(
+            AppLocalizations.of(context)!.voteViewTitle,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.headlineLarge,
           ),
         ),
-        Positioned(
-          top: size.height * 0.2,
-          right: -(largeBall.width / 2),
-          child: GradientCircle(
-            size: largeBall,
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              const Color(0xffED6BE0),
-              const Color(0xffD14FFF).withOpacity(.52),
-            ],
-          ),
-        ),
-        Positioned(
-          top: size.height * 0.6,
-          right: smallBall.width / 2,
-          child: GradientCircle(
-            size: smallBall,
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              const Color(0xffED6BE0),
-              const Color(0xffD14FFF).withOpacity(.52),
-            ],
-          ),
-        ),
-        // padding: const EdgeInsets.symmetric(horizontal: 32),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
-              child: Text(
-                AppLocalizations.of(context)!.voteViewTitle,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headlineLarge,
-              ),
-            ),
-            const SizedBox(height: 58),
-            SizedBox(
-              height: 300,
-              child: PageView.builder(
-                controller: ref.watch(voteController).pageController,
-                itemCount: shits.length,
-                itemBuilder: ((context, index) {
-                  final shit = shits[index];
-                  return Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 32),
-                    height: size.width * .9,
-                    child: GlassMorphism(
-                      child: Center(
-                        child: SvgPicture.asset(shit.path),
+        const SizedBox(height: 58),
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 1000),
+          switchInCurve: Curves.easeInOut,
+          switchOutCurve: Curves.easeInOut,
+          child: VoteView.shits.map((e) {
+            return SizedBox(
+                key: ValueKey(e.path),
+                height: 300,
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 32),
+                  height: size.width * .9,
+                  child: GlassMorphism(
+                    child: Center(
+                      child: SvgPicture.asset(
+                        e.path,
+                        width: double.infinity,
                       ),
                     ),
-                  );
-                }),
+                  ),
+                ));
+          }).toList()[currentShit],
+        ),
+        const SizedBox(height: 58),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              RoundButton(
+                onPressed: () => onVoteTap(ref, -1),
+                text: '-1',
+                color: Colors.red,
               ),
-            ),
-            const SizedBox(height: 58),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  RoundButton(
-                    onPressed: () => onVoteTap(ref, -1),
-                    text: '-1',
-                    color: Colors.red,
-                  ),
-                  RoundButton(
-                    onPressed: () => onVoteTap(ref, 0),
-                    text: '0',
-                    color: Colors.grey,
-                  ),
-                  RoundButton(
-                    onPressed: () => onVoteTap(ref, 1),
-                    text: '+1',
-                    color: Colors.green,
-                  ),
-                ],
+              RoundButton(
+                onPressed: () => onVoteTap(ref, 0),
+                text: '0',
+                color: Colors.grey,
               ),
-            ),
-          ],
+              RoundButton(
+                onPressed: () => onVoteTap(ref, 1),
+                text: '+1',
+                color: Colors.green,
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -133,13 +113,14 @@ class VoteView extends ConsumerWidget {
   void onVoteTap(WidgetRef ref, int value) {
     final controllerNotifier = ref.read(voteController.notifier);
     final controller = ref.read(voteController);
-    final shitIndex = controller.pageController.page!.round();
+    final shitIndex = controller.currentShit;
 
-    controllerNotifier.vote(
-      value,
-      shits[shitIndex].name,
-    );
-    controllerNotifier.nextPage();
+    if (!ref.read(voteController).isBusy) {
+      controllerNotifier.vote(
+        value,
+        VoteView.shits[shitIndex].name,
+      );
+    }
   }
 }
 
@@ -188,6 +169,7 @@ class GlassMorphism extends StatelessWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
+          padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
