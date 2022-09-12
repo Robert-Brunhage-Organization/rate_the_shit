@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mobile/src/home/home_controller.dart';
 import 'package:mobile/src/home/leaderboard/leaderboard_view.dart';
+import 'package:mobile/src/home/what/what_view.dart';
 
 import 'vote/vote_view.dart';
 
@@ -94,7 +95,7 @@ class HomeView extends HookConsumerWidget {
                 child: [
                   const VoteView(),
                   const LeaderboardView(),
-                  Container(),
+                  const WhatView(),
                 ][controllerIndex],
               ),
             ],

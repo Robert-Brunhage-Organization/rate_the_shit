@@ -29,7 +29,7 @@ class CustomInterceptors extends Interceptor {
   GlobalKey<ScaffoldMessengerState> key;
 
   @override
-   onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+  onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     debugPrint('REQUEST[${options.method}] => PATH: ${options.path}');
     return super.onRequest(options, handler);
   }
@@ -37,14 +37,17 @@ class CustomInterceptors extends Interceptor {
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     debugPrint(
-        'RESPONSE[${response.statusCode}] => PATH: ${response.requestOptions.path}');
+      'RESPONSE[${response.statusCode}] => PATH: ${response.requestOptions.path}',
+    );
+    debugPrint('RESPONSE VALUE: ${response.data}');
     return super.onResponse(response, handler);
   }
 
   @override
   onError(DioError err, ErrorInterceptorHandler handler) {
     debugPrint(
-        'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path}');
+      'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path}',
+    );
     key.currentState!.showSnackBar(
       SnackBar(
         content: Text(

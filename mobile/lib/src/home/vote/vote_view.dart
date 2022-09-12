@@ -29,7 +29,7 @@ class VoteView extends ConsumerWidget {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 200),
       switchInCurve: Curves.easeInOut,
-      child: ref.watch(voteController).noMoreShits
+      child: ref.watch(voteControllerProvider).noMoreShits
           ? Text(
               'See leaderboard',
               textAlign: TextAlign.center,
@@ -46,7 +46,7 @@ class VoteBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
-    final currentShit = ref.watch(voteController).currentShit;
+    final currentShit = ref.watch(voteControllerProvider).currentShit;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -60,27 +60,28 @@ class VoteBody extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 58),
-        AnimatedSwitcher(
-          duration: const Duration(milliseconds: 1000),
-          switchInCurve: Curves.easeInOut,
-          switchOutCurve: Curves.easeInOut,
-          child: VoteView.shits.map((e) {
-            return SizedBox(
-                key: ValueKey(e.path),
-                height: 300,
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 32),
-                  height: size.width * .9,
-                  child: GlassMorphism(
-                    child: Center(
-                      child: SvgPicture.asset(
-                        e.path,
-                        width: double.infinity,
-                      ),
+        SizedBox(
+          height: 300,
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 32),
+            height: size.width * .9,
+            child: GlassMorphism(
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 1000),
+                switchInCurve: Curves.easeInOut,
+                switchOutCurve: Curves.easeInOut,
+                child: VoteView.shits.map((e) {
+                  return Center(
+                    key: ValueKey(e),
+                    child: SvgPicture.asset(
+                      e.path,
+                      width: double.infinity,
                     ),
-                  ),
-                ));
-          }).toList()[currentShit],
+                  );
+                }).toList()[currentShit],
+              ),
+            ),
+          ),
         ),
         const SizedBox(height: 58),
         Padding(
@@ -111,11 +112,11 @@ class VoteBody extends ConsumerWidget {
   }
 
   void onVoteTap(WidgetRef ref, int value) {
-    final controllerNotifier = ref.read(voteController.notifier);
-    final controller = ref.read(voteController);
+    final controllerNotifier = ref.read(voteControllerProvider.notifier);
+    final controller = ref.read(voteControllerProvider);
     final shitIndex = controller.currentShit;
 
-    if (!ref.read(voteController).isBusy) {
+    if (!ref.read(voteControllerProvider).isBusy) {
       controllerNotifier.vote(
         value,
         VoteView.shits[shitIndex].name,

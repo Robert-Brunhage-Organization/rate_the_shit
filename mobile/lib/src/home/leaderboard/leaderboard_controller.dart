@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mobile/src/home/leaderboard/leaderboard_service.dart';
 import 'package:mobile/src/home/shit.dart';
@@ -17,22 +18,55 @@ class LeaderboardController extends ShitChangeNotifier {
   LeaderboardController(this._leaderboardService);
   final LeaderboardService _leaderboardService;
 
-  List<Shit> _shits = [];
+  final List<Shit> _shits = [];
   UnmodifiableListView<Shit> get shits => UnmodifiableListView(_shits);
-  
 
   Future<Result<Exception, List<Shit>>> getAll() async {
     setBusy();
     final result = await _leaderboardService.getAll();
 
     result.when(
-      (error) => null,
-      (successValue) {
-        _shits = successValue;
+      (error) => {},
+      (shitResults) {
+        _veryUglySortingPleaseHelp(shitResults);
       },
     );
 
     setBusy(false);
     return result;
+  }
+
+  /// This is really really ugly and just didn't want to bother with the
+  /// solution. Best case would be to do this in the API layer and just return the
+  /// ordered results but yeah.
+  void _veryUglySortingPleaseHelp(List<Shit> shitResults) {
+    _shits.clear();
+    final itemsWithoutZero = shitResults
+        .where(
+            (element) => element.positiveRating + element.negativeRating != 0)
+        .toList();
+
+    itemsWithoutZero.sort((a, b) {
+      final aPercentage =
+          (a.positiveRating / (a.positiveRating + a.negativeRating)) * 100;
+      final bPercentage =
+          (b.positiveRating / (b.positiveRating + b.negativeRating)) * 100;
+
+      if (aPercentage == bPercentage) {
+        return (b.positiveRating + b.negativeRating) -
+            (a.positiveRating + a.negativeRating);
+      }
+
+      return (bPercentage - aPercentage).round();
+    });
+
+    final itemsWithZero = shitResults
+        .where(
+          (element) => element.positiveRating + element.negativeRating == 0,
+        )
+        .toList();
+
+    _shits.addAll(itemsWithoutZero);
+    _shits.addAll(itemsWithZero);
   }
 }

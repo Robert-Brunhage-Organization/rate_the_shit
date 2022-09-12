@@ -5,7 +5,7 @@ import 'package:multiple_result/multiple_result.dart';
 
 import '../../core/shit_change_notifier.dart';
 
-final voteController = ChangeNotifierProvider((ref) {
+final voteControllerProvider = ChangeNotifierProvider((ref) {
   return VoteController(
     ref.watch(voteServiceProvider),
   );
@@ -29,19 +29,18 @@ class VoteController extends ShitChangeNotifier {
   Future<Result<Exception, bool>> vote(int value, String name) async {
     setBusy();
     final result = await _voteService.vote(name, value);
-    setBusy(false);
 
     result.when(
       (error) => null,
       (success) {
         _shitsVotedOn++;
-        notifyListeners();
         if (!noMoreShits) {
           nextPage();
         }
       },
     );
 
+    setBusy(false);
     return result;
   }
 }

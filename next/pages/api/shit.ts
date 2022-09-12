@@ -118,16 +118,8 @@ async function vote(req: NextApiRequest, res: NextApiResponse<Shit | Error>) {
 
 async function get(res: NextApiResponse<Shit[] | Error>) {
   try {
-    let shits = await prisma.shit.findMany({
-      orderBy: [
-        {
-          positiveRating: 'desc'
-        },
-        {
-          negativeRating: 'asc'
-        },
-      ]
-    });
+    // No clue how to order by percentage of positive and negative rating
+    let shits = await prisma.shit.findMany();
     return res.status(200).json(shits);
   } catch (error) {
     console.error("Request error", error);
