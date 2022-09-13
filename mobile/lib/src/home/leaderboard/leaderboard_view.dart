@@ -26,24 +26,33 @@ class _LeaderboardViewState extends ConsumerState<LeaderboardView> {
   Widget build(BuildContext context) {
     final shits = ref.watch(leaderboardControllerProvider).shits;
 
-    return ListView.separated(
-      itemCount: shits.length,
-      separatorBuilder: (context, index) {
-        return const Divider();
-      },
-      itemBuilder: (context, index) {
-        final shit = shits[index];
-        return Container(
-          padding: const EdgeInsets.all(14),
-          child: Row(children: [
-            SvgPicture.asset(shit.path, width: 34),
-            const SizedBox(width: 16),
-            Text(shit.name, style: Theme.of(context).textTheme.titleLarge),
-            const Spacer(),
-            generatePercent(shit, context),
-          ]),
-        );
-      },
+    if (ref.watch(leaderboardControllerProvider).isBusy) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: () => ref.read(leaderboardControllerProvider.notifier).getAll(),
+      child: ListView.separated(
+        itemCount: shits.length,
+        separatorBuilder: (context, index) {
+          return const Divider();
+        },
+        itemBuilder: (context, index) {
+          final shit = shits[index];
+          return Container(
+            padding: const EdgeInsets.all(14),
+            child: Row(children: [
+              SvgPicture.asset(shit.path, width: 34),
+              const SizedBox(width: 16),
+              Text(shit.name, style: Theme.of(context).textTheme.titleLarge),
+              const Spacer(),
+              generatePercent(shit, context),
+            ]),
+          );
+        },
+      ),
     );
   }
 
@@ -77,7 +86,6 @@ class _RatingBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final sum = positiveRating + negativeRating;
 
     double value = 0.5;
