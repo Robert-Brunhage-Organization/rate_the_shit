@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mobile/src/home/vote/vote_controller.dart';
+import 'package:mobile/src/styles.dart';
 
 import '../shit.dart';
 
@@ -33,7 +34,7 @@ class VoteView extends ConsumerWidget {
           ? Text(
               'See leaderboard',
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headlineLarge,
+              style: $styles.text.shitTitle,
             )
           : const VoteBody(),
     );
@@ -56,7 +57,7 @@ class VoteBody extends ConsumerWidget {
           child: Text(
             AppLocalizations.of(context)!.voteViewTitle,
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headlineLarge,
+            style: $styles.text.shitTitle,
           ),
         ),
         const SizedBox(height: 58),
@@ -220,9 +221,7 @@ class RoundButton extends StatelessWidget {
         ),
         child: Text(
           text,
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
+          style: $styles.text.h3,
         ),
       ),
     );

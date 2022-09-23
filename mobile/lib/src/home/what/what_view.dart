@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/src/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class WhatView extends StatelessWidget {
@@ -13,7 +14,7 @@ class WhatView extends StatelessWidget {
           Text(
             'I thought this was fun to make :)',
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headlineSmall,
+            style: $styles.text.h3,
           ),
           const SizedBox(height: 42),
           const ClickableLink(
@@ -42,10 +43,10 @@ class ClickableLink extends StatelessWidget {
       onTap: () => launchUrl(Uri(path: link)),
       child: Text(
         text,
-        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              color: Colors.blue,
-              decoration: TextDecoration.underline,
-            ),
+        style: $styles.text.body.copyWith(
+          color: $styles.colors.link,
+          decoration: TextDecoration.underline,
+        ),
       ),
     );
   }

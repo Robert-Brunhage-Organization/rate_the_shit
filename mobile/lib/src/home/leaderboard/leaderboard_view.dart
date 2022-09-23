@@ -3,6 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mobile/src/home/leaderboard/leaderboard_controller.dart';
+import 'package:mobile/src/styles.dart';
 
 import '../shit.dart';
 
@@ -46,7 +47,7 @@ class _LeaderboardViewState extends ConsumerState<LeaderboardView> {
             child: Row(children: [
               SvgPicture.asset(shit.path, width: 34),
               const SizedBox(width: 16),
-              Text(shit.name, style: Theme.of(context).textTheme.titleLarge),
+              Text(shit.name, style: $styles.text.title2),
               const Spacer(),
               generatePercent(shit, context),
             ]),
@@ -100,7 +101,7 @@ class _RatingBar extends StatelessWidget {
         children: [
           Text(
             '$positiveRating',
-            style: Theme.of(context).textTheme.titleSmall,
+            style: $styles.text.title2,
           ),
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
@@ -116,7 +117,7 @@ class _RatingBar extends StatelessWidget {
           ),
           Text(
             '$negativeRating',
-            style: Theme.of(context).textTheme.titleSmall,
+            style: $styles.text.title2,
           ),
         ],
       ),

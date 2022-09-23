@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mobile/src/app.dart';
+import 'package:mobile/src/styles.dart';
 
 final dioProvider = Provider((ref) {
   final key = ref.watch(messengerKeyProvider);
@@ -52,7 +53,9 @@ class CustomInterceptors extends Interceptor {
       SnackBar(
         content: Text(
           dioMapper(err),
-          style: const TextStyle(color: Colors.white),
+          style: $styles.text.body.copyWith(
+            color: $styles.colors.white,
+          ),
         ),
         backgroundColor: Colors.red,
       ),

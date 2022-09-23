@@ -5,6 +5,8 @@ import 'package:mobile/src/home/home_view.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'styles.dart';
+
 final messengerKeyProvider = Provider((ref) {
   final scaffoldKey = GlobalKey<ScaffoldMessengerState>();
   return scaffoldKey;
@@ -28,7 +30,7 @@ class MyApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       themeMode: ThemeMode.dark,
-      darkTheme: getDarkTheme(context),
+      darkTheme: $styles.colors.themeData(isDark: true),
       supportedLocales: const [
         Locale('en', ''), // English, no country code
       ],
@@ -44,18 +46,5 @@ class MyApp extends ConsumerWidget {
         },
       ),
     ],
-  );
-}
-
-ThemeData getDarkTheme(BuildContext context) {
-  return ThemeData.dark(
-    useMaterial3: true,
-  ).copyWith(
-    textTheme: Theme.of(context)
-        .textTheme
-        .apply(
-          displayColor: Colors.white,
-          bodyColor: Colors.white,
-        )
   );
 }
