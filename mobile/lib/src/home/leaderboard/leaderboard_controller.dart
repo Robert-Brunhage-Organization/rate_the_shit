@@ -1,6 +1,5 @@
 import 'dart:collection';
 
-import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mobile/src/home/leaderboard/leaderboard_service.dart';
 import 'package:mobile/src/home/shit.dart';

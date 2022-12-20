@@ -22,7 +22,7 @@ class MyApp extends ConsumerWidget {
       routeInformationProvider: _router.routeInformationProvider,
       routeInformationParser: _router.routeInformationParser,
       routerDelegate: _router.routerDelegate,
-      title: 'Rate The Framework',
+      title: 'Rate The Shit',
       localizationsDelegates: const [
         AppLocalizations.delegate, // Add this line
         GlobalMaterialLocalizations.delegate,
