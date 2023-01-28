@@ -20,15 +20,15 @@ class LeaderboardController extends ShitChangeNotifier {
   final List<Shit> _shits = [];
   UnmodifiableListView<Shit> get shits => UnmodifiableListView(_shits);
 
-  Future<Result<Exception, List<Shit>>> getAll() async {
+  Future<Result<List<Shit>, Exception>> getAll() async {
     setBusy();
     final result = await _leaderboardService.getAll();
 
     result.when(
-      (error) => {},
       (shitResults) {
         _veryUglySortingPleaseHelp(shitResults);
       },
+      (error) {},
     );
 
     setBusy(false);

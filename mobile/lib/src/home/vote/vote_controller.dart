@@ -26,7 +26,7 @@ class VoteController extends ShitChangeNotifier {
     notifyListeners();
   }
 
-  Future<Result<Exception, bool>> vote(int value, String name) async {
+  Future<Result<bool, Exception>> vote(int value, String name) async {
     setBusy();
     final result = await _voteService.vote(name, value);
 

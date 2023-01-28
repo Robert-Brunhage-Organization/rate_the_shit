@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/src/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class WhatView extends StatelessWidget {
   const WhatView({super.key});
@@ -39,13 +40,16 @@ class ClickableLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => launchUrl(Uri(path: link)),
-      child: Text(
-        text,
-        style: $styles.text.body.copyWith(
-          color: $styles.colors.link,
-          decoration: TextDecoration.underline,
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () => launchUrlString(link),
+        child: Text(
+          text,
+          style: $styles.text.body.copyWith(
+            color: $styles.colors.link,
+            decoration: TextDecoration.underline,
+          ),
         ),
       ),
     );

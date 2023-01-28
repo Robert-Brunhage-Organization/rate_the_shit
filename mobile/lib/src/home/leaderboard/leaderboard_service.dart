@@ -14,7 +14,7 @@ class LeaderboardService {
   LeaderboardService(this._leaderboardRepository);
   final LeaderboardRepository _leaderboardRepository;
 
-  Future<Result<Exception, List<Shit>>> getAll() async {
+  Future<Result<List<Shit>, Exception>> getAll() async {
     try {
       final result = await _leaderboardRepository.getAll();
       final shits = result.map((e) => Shit.fromEntity(e)).toList();

@@ -6,7 +6,7 @@ const Home: NextPage = () => {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Rate the Shit</title>
+        <title>Hi youtube</title>
         <meta name="description" content="Rate the Shit" />
         <link rel="icon" href="/favicon.ico" />
       </Head>

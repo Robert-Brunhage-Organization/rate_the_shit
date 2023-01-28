@@ -12,7 +12,7 @@ class VoteService {
   VoteService(this._voteRepository);
   final VoteRepository _voteRepository;
 
-  Future<Result<Exception, bool>> vote(String name, int value) async {
+  Future<Result<bool, Exception>> vote(String name, int value) async {
     try {
       final result = await _voteRepository.vote(name, value);
       return Success(result);

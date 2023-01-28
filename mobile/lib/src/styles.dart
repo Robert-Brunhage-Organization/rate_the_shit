@@ -27,7 +27,7 @@ class AppColors {
     /// Create a TextTheme and ColorScheme, that we can use to generate ThemeData
     final textTheme = (isDark ? ThemeData.dark() : ThemeData.light()).textTheme;
 
-    final textColor = textTheme.bodyText1!.color!;
+    final textColor = textTheme.bodyLarge!.color!;
 
     ColorScheme colorScheme = ColorScheme(
         // Decide how you want to apply your own custom them, to the MaterialApp
