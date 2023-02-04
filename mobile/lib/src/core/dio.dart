@@ -14,7 +14,7 @@ final dioProvider = Provider((ref) {
     BaseOptions(
       baseUrl: kReleaseMode
           ? 'https://rate-the-shit.vercel.app/api'
-          : Platform.isAndroid
+          : defaultTargetPlatform == TargetPlatform.android
               ? 'http://10.0.2.2:3000/api'
               : 'http://localhost:3000/api',
     ),

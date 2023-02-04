@@ -31,13 +31,13 @@ class VoteController extends ShitChangeNotifier {
     final result = await _voteService.vote(name, value);
 
     result.when(
-      (error) => null,
       (success) {
         _shitsVotedOn++;
         if (!noMoreShits) {
           nextPage();
         }
       },
+      (error) {},
     );
 
     setBusy(false);
