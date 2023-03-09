@@ -101,6 +101,10 @@ async function vote(req: NextApiRequest, res: NextApiResponse<Shit | Error>) {
   try {
     let upsertShit: Shit;
     console.log(body);
+    let count = await prisma.shit.count({ where: { name: body.name } });
+    if (count === 0) {
+      return res.status(500).json({ error: 'You little S***' });
+    };
     if (body.value > 0) {
       upsertShit = await increment();
     } else if (body.value < 0) {
@@ -111,7 +115,7 @@ async function vote(req: NextApiRequest, res: NextApiResponse<Shit | Error>) {
     return res.status(200).json(upsertShit);
   } catch (error) {
     console.error("Request error", error);
-    res.status(500).json({ error: "Error creating shit" });
+    return res.status(500).json({ error: "Error creating shit" });
   }
 }
 
